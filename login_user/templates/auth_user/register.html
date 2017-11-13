@@ -1,0 +1,55 @@
+
+{% extends 'auth_user/base_visitor.html' %}
+
+{% block title %}Register{% endblock %}
+{% block register_active %}active{% endblock %}
+
+{% block body %}
+
+
+
+<form role="form" action="" method="POST" class="registration-form">
+
+  {% csrf_token %}
+
+{% include 'auth_user/form_template.html' %}
+
+{{reg_statement}}
+
+      {% block javascript %}
+      <script>
+      console.log($("#id_username"));
+    $("#id_username").keyup(function() {
+
+
+      if (this.value.length < 4) {
+        $("#lola").hide();
+        return
+      }
+      $("#lola").show();
+      var username = $(this).val();
+      console.log(username);
+      $.ajax({
+        url: '/ajax/validate_username/',
+        type: "POST",
+        data: {
+          'username': username,
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+        },
+        dataType: 'json',
+        success: function(data) {
+          console.log(data);
+          if (data.is_taken) {
+            $("#lola").html('<i class="glyphicon glyphicon-remove" aria-hidden="true"></i>');
+          
+
+          } else {
+            $("#lola").html('<i class="glyphicon glyphicon-ok" aria-hidden="true"></i>');
+          }
+        }
+      });
+
+    });
+    </script>
+      {% endblock %}
+{% endblock %}
